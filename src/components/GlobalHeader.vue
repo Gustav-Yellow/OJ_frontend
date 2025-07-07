@@ -1,5 +1,10 @@
 <template>
-  <a-row id="globalHeader" align="center" :wrap="false">
+  <a-row
+    id="globalHeader"
+    style="margin-bottom: 16px"
+    align="center"
+    :wrap="false"
+  >
     <a-col flex="auto">
       <a-menu
         mode="horizontal"
@@ -16,7 +21,7 @@
             <div class="title">OJ System</div>
           </div>
         </a-menu-item>
-        <a-menu-item v-for="item in routes" :key="item.path">
+        <a-menu-item v-for="item in visibleRoutes" :key="item.path">
           {{ item.name }}
         </a-menu-item>
       </a-menu>
@@ -32,13 +37,34 @@
 <script setup lang="ts">
 import { routes } from "../router/routes";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import checkAccess from "@/access/checkAccess";
 
 // 路由
 const router = useRouter();
+// 通过全局状态，获取用户信息
+const store = useStore();
+console.log(store.state.user);
+// 获取登录用户信息
+const loginUser = store.state.user?.loginUser;
 
-// 获取全局状态变量
+// 展示在菜单的路由数组
+// 使用 computed 属性，是为了当登录用户信息发生变更的时候，出发餐单栏的重新渲染，展示新增权限的菜单栏
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+    // 根据权限过滤菜单
+    if (
+      !checkAccess(store.state.user.loginUser, item?.meta?.access as string)
+    ) {
+      return false;
+    }
+    return true;
+  });
+});
 
 // 默认主页
 const selectedKeys = ref(["/"]);
@@ -59,15 +85,11 @@ const doMenuClick = (key: string) => {
   });
 };
 
-// 通过全局状态，获取用户信息
-const store = useStore();
-console.log(store.state.user);
-
 // 测试，3秒后打印用户信息
 setTimeout(() => {
   store.dispatch("user/getLoginUser", {
     userName: "xiaoming",
-    role: "admin",
+    userRole: "admin",
   });
 }, 3000);
 </script>

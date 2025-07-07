@@ -11,7 +11,7 @@ export default {
   }),
   actions: {
     getLoginUser({ commit, state }, payload) {
-      commit("updateUser", { userName: payload.userName });
+      commit("updateUser", payload);
     },
   },
   mutations: {
