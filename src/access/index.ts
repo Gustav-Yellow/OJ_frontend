@@ -3,6 +3,7 @@ import router from "@/router";
 import ACCESS_ENUM from "@/access/accessEnum";
 import checkAccess from "@/access/checkAccess";
 
+// 这里相当于是前端请求中所有的权限管理单独提取出来
 // 这里单独将路由守卫提出来，方便在登录页面使用
 router.beforeEach(async (to, from, next) => {
   console.log("登录用户的信息：", store.state.user.loginUser);
