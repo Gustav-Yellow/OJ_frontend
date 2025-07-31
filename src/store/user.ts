@@ -1,7 +1,7 @@
 // initial state
 import { StoreOptions } from "vuex";
-import { UserControllerService } from "../../generated";
 import ACCESS_ENUM from "@/access/accessEnum";
+import { UserControllerService } from "../../generated";
 
 export default {
   namespaced: true,
@@ -12,7 +12,7 @@ export default {
   }),
   actions: {
     async getLoginUser({ commit, state }, payload) {
-      // 获取登录用户
+      // 从远程请求获取登录信息
       const res = await UserControllerService.getLoginUserUsingGet();
       if (res.code === 0) {
         commit("updateUser", res.data);
